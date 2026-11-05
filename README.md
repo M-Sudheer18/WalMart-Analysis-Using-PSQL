@@ -279,13 +279,11 @@ This analysis shows how Python and SQL work together, from raw data to business 
 └── README.md
 ```
 
-## Author - [Your Name]
+## Author - [Sudheer Muthyala]
 
 This project is part of my portfolio, showcasing the Python and SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
 
-- **YouTube**: [Add your channel link]
-- **Instagram**: [Add your profile link]
-- **LinkedIn**: [Add your profile link]
-- **GitHub**: [Add your profile link]
+- **LinkedIn**: [https://www.linkedin.com/in/sudheer-muthyala-317180268/]
+- **GitHub**: [https://github.com/M-Sudheer18]
 
 Thank you for your support, and I look forward to connecting with you!
