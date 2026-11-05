@@ -23,7 +23,6 @@ Kaggle Dataset  ->  Python (Process, Clean, Load)  ->  PostgreSQL / MySQL  ->  S
 
 The data for this project is sourced from Kaggle:
 
-- **Dataset Link:** [Add your Kaggle Walmart dataset link here]
 - **Raw file:** `Walmart.csv` (10,051 rows, 11 columns)
 - **Cleaned file:** `walmart_clean_data.csv` (9,969 rows, 12 columns)
 
