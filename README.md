@@ -1,136 +1,292 @@
-# Walmart Data Analysis: End-to-End SQL + Python Project P-9
+# Walmart Sales Data Analysis: End-to-End Python + SQL Project
 
-## Project Overview
+## Overview
+This project is an end-to-end data analysis of Walmart sales transactions. Python (Pandas, SQLAlchemy, psycopg2) is used to load and clean the raw data, which is then loaded into PostgreSQL, where SQL is used to answer real business questions. This README documents the objectives, workflow, business problems, solutions, findings, and conclusions.
 
-![Project Pipeline](https://github.com/najirh/Walmart_SQL_Python/blob/main/walmart_project-piplelines.png)
+## Objectives
 
+- Clean and prepare raw sales data using Python and Pandas.
+- Load the cleaned data into a relational database (PostgreSQL / MySQL).
+- Analyze payment methods, category ratings, branch traffic, and profit.
+- Identify branch-level trends such as busiest days, shift activity, and year-over-year revenue decline.
+- Practice `GROUP BY`, aggregate functions, window functions, CTEs, and date functions.
 
-This project is an end-to-end data analysis solution designed to extract critical business insights from Walmart sales data. We utilize Python for data processing and analysis, SQL for advanced querying, and structured problem-solving techniques to solve key business questions. The project is ideal for data analysts looking to develop skills in data manipulation, SQL querying, and data pipeline creation.
+## Project Workflow
 
----
+```
+Kaggle Dataset  ->  Python (Process, Clean, Load)  ->  PostgreSQL / MySQL  ->  Solve Business Problems
+```
 
-## Project Steps
+**Tools used:** Pandas, SQLAlchemy, PyMySQL, Psycopg2, IPython / Jupyter, PostgreSQL
 
-### 1. Set Up the Environment
-   - **Tools Used**: Visual Studio Code (VS Code), Python, SQL (MySQL and PostgreSQL)
-   - **Goal**: Create a structured workspace within VS Code and organize project folders for smooth development and data handling.
+## Dataset
 
-### 2. Set Up Kaggle API
-   - **API Setup**: Obtain your Kaggle API token from [Kaggle](https://www.kaggle.com/) by navigating to your profile settings and downloading the JSON file.
-   - **Configure Kaggle**: 
-      - Place the downloaded `kaggle.json` file in your local `.kaggle` folder.
-      - Use the command `kaggle datasets download -d <dataset-path>` to pull datasets directly into your project.
+The data for this project is sourced from Kaggle:
 
-### 3. Download Walmart Sales Data
-   - **Data Source**: Use the Kaggle API to download the Walmart sales datasets from Kaggle.
-   - **Dataset Link**: [Walmart Sales Dataset](https://www.kaggle.com/najir0123/walmart-10k-sales-datasets)
-   - **Storage**: Save the data in the `data/` folder for easy reference and access.
+- **Dataset Link:** [Add your Kaggle Walmart dataset link here]
+- **Raw file:** `Walmart.csv` (10,051 rows, 11 columns)
+- **Cleaned file:** `walmart_clean_data.csv` (9,969 rows, 12 columns)
 
-### 4. Install Required Libraries and Load Data
-   - **Libraries**: Install necessary Python libraries using:
-     ```bash
-     pip install pandas numpy sqlalchemy mysql-connector-python psycopg2
-     ```
-   - **Loading Data**: Read the data into a Pandas DataFrame for initial analysis and transformations.
+## Data Cleaning Steps (Python)
 
-### 5. Explore the Data
-   - **Goal**: Conduct an initial data exploration to understand data distribution, check column names, types, and identify potential issues.
-   - **Analysis**: Use functions like `.info()`, `.describe()`, and `.head()` to get a quick overview of the data structure and statistics.
+All steps are in `project.ipynb`:
 
-### 6. Data Cleaning
-   - **Remove Duplicates**: Identify and remove duplicate entries to avoid skewed results.
-   - **Handle Missing Values**: Drop rows or columns with missing values if they are insignificant; fill values where essential.
-   - **Fix Data Types**: Ensure all columns have consistent data types (e.g., dates as `datetime`, prices as `float`).
-   - **Currency Formatting**: Use `.replace()` to handle and format currency values for analysis.
-   - **Validation**: Check for any remaining inconsistencies and verify the cleaned data.
+1. Loaded `Walmart.csv` with Pandas and inspected it using `head()`, `describe()`, and `info()`.
+2. Removed **51 duplicate rows** (10,051 -> 10,000).
+3. Dropped **31 rows with missing values** in `unit_price` and `quantity` (10,000 -> 9,969).
+4. Converted `unit_price` from text (e.g. `$74.69`) to a float by removing the `$` sign.
+5. Created a new column `total = unit_price * quantity`.
+6. Converted all column names to lowercase.
+7. Saved the result to `walmart_clean_data.csv`.
+8. Loaded the cleaned data into PostgreSQL using SQLAlchemy (`df.to_sql`).
 
-### 7. Feature Engineering
-   - **Create New Columns**: Calculate the `Total Amount` for each transaction by multiplying `unit_price` by `quantity` and adding this as a new column.
-   - **Enhance Dataset**: Adding this calculated field will streamline further SQL analysis and aggregation tasks.
+## Schema
 
-### 8. Load Data into MySQL and PostgreSQL
-   - **Set Up Connections**: Connect to MySQL and PostgreSQL using `sqlalchemy` and load the cleaned data into each database.
-   - **Table Creation**: Set up tables in both MySQL and PostgreSQL using Python SQLAlchemy to automate table creation and data insertion.
-   - **Verification**: Run initial SQL queries to confirm that the data has been loaded accurately.
+After loading, the `walmart` table has the following columns:
 
-### 9. SQL Analysis: Complex Queries and Business Problem Solving
-   - **Business Problem-Solving**: Write and execute complex SQL queries to answer critical business questions, such as:
-     - Revenue trends across branches and categories.
-     - Identifying best-selling product categories.
-     - Sales performance by time, city, and payment method.
-     - Analyzing peak sales periods and customer buying patterns.
-     - Profit margin analysis by branch and category.
-   - **Documentation**: Keep clear notes of each query's objective, approach, and results.
+| Column | Description |
+|---|---|
+| invoice_id | Unique transaction ID |
+| branch | Branch code (e.g. WALM003) |
+| city | City of the branch |
+| category | Product category |
+| unit_price | Price per unit |
+| quantity | Number of units sold |
+| date | Transaction date (`DD/MM/YY`) |
+| time | Transaction time |
+| payment_method | Cash, Credit card, or Ewallet |
+| rating | Customer rating |
+| profit_margin | Profit margin of the sale |
+| total | `unit_price * quantity` |
 
-### 10. Project Publishing and Documentation
-   - **Documentation**: Maintain well-structured documentation of the entire process in Markdown or a Jupyter Notebook.
-   - **Project Publishing**: Publish the completed project on GitHub or any other version control platform, including:
-     - The `README.md` file (this document).
-     - Jupyter Notebooks (if applicable).
-     - SQL query scripts.
-     - Data files (if possible) or steps to access them.
+```sql
+-- Verify the data load
+SELECT * FROM walmart;
+SELECT COUNT(*) FROM walmart;
+```
 
----
+> Adjust column names and types if your imported data differs.
 
-## Requirements
+## Business Problems and Solutions
 
-- **Python 3.8+**
-- **SQL Databases**: MySQL, PostgreSQL
-- **Python Libraries**:
-  - `pandas`, `numpy`, `sqlalchemy`, `mysql-connector-python`, `psycopg2`
-- **Kaggle API Key** (for data downloading)
+### 1. Analyze Payment Methods and Sales
 
-## Getting Started
+```sql
+SELECT
+    payment_method,
+    COUNT(*) AS no_payments,
+    SUM(quantity) AS no_qty_sold
+FROM walmart
+GROUP BY payment_method;
+```
 
-1. Clone the repository:
-   ```bash
-   git clone <repo-url>
-   ```
-2. Install Python libraries:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Set up your Kaggle API, download the data, and follow the steps to load and analyze.
+**Objective:** Find the different payment methods, with the number of transactions and items sold for each. This shows customer payment preferences.
 
----
+### 2. Identify the Highest-Rated Category in Each Branch
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        branch,
+        category,
+        AVG(rating) AS avg_rating,
+        RANK() OVER(PARTITION BY branch ORDER BY AVG(rating) DESC) AS ranking
+    FROM walmart
+    GROUP BY 1, 2
+) AS t
+WHERE ranking = 1;
+```
+
+**Objective:** Find the category with the highest average rating in each branch, so popular categories can be promoted locally.
+
+### 3. Determine the Busiest Day for Each Branch
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        branch,
+        TRIM(TO_CHAR(TO_DATE(date, 'DD/MM/YY'), 'Day')) AS day_name,
+        COUNT(*) AS no_transactions,
+        RANK() OVER(PARTITION BY branch ORDER BY COUNT(*) DESC) AS ranking
+    FROM walmart
+    GROUP BY 1, 2
+) AS t
+WHERE ranking = 1;
+```
+
+**Objective:** Find the weekday with the most transactions for each branch, to help with staffing and inventory planning.
+
+### 4. Calculate Total Quantity Sold by Payment Method
+
+```sql
+SELECT
+    payment_method,
+    SUM(quantity) AS total_quantity
+FROM walmart
+GROUP BY payment_method;
+```
+
+**Objective:** Track sales volume by payment type to understand customer purchasing habits.
+
+### 5. Analyze Category Ratings by City
+
+```sql
+SELECT
+    city,
+    category,
+    MIN(rating) AS min_rating,
+    MAX(rating) AS max_rating,
+    AVG(rating) AS avg_rating
+FROM walmart
+GROUP BY 1, 2;
+```
+
+**Objective:** Get the minimum, maximum, and average rating of each category in each city, to guide city-level promotions.
+
+### 6. Calculate Total Profit by Category
+
+```sql
+SELECT
+    category,
+    SUM(total) AS total_revenue,
+    SUM(total * profit_margin) AS total_profit
+FROM walmart
+GROUP BY 1
+ORDER BY 3 DESC;
+```
+
+**Objective:** Calculate revenue and profit (`total * profit_margin`) per category, ranked from highest to lowest profit.
+
+### 7. Determine the Most Common Payment Method per Branch
+
+```sql
+WITH cte AS
+(
+    SELECT
+        branch,
+        payment_method,
+        COUNT(*) AS total_trans,
+        RANK() OVER(PARTITION BY branch ORDER BY COUNT(*) DESC) AS ranking
+    FROM walmart
+    GROUP BY branch, payment_method
+)
+SELECT
+    branch,
+    payment_method AS preferred_payment_method
+FROM cte
+WHERE ranking = 1;
+```
+
+**Objective:** Find the preferred payment method of each branch, so branches can streamline their payment processing.
+
+### 8. Analyze Sales Shifts Throughout the Day
+
+```sql
+SELECT
+    branch,
+    CASE
+        WHEN EXTRACT(HOUR FROM time::time) < 12 THEN 'Morning'
+        WHEN EXTRACT(HOUR FROM time::time) BETWEEN 12 AND 17 THEN 'Afternoon'
+        ELSE 'Evening'
+    END AS shift,
+    COUNT(*) AS no_transactions
+FROM walmart
+GROUP BY 1, 2
+ORDER BY 1, 3 DESC;
+```
+
+**Objective:** Count transactions in each shift (Morning, Afternoon, Evening) per branch, to plan staff shifts and stock replenishment.
+
+### 9. Identify Branches with the Highest Revenue Decline Year-over-Year
+
+```sql
+WITH revenue_2022 AS
+(
+    SELECT
+        branch,
+        SUM(total) AS revenue
+    FROM walmart
+    WHERE EXTRACT(YEAR FROM TO_DATE(date, 'DD/MM/YY')) = 2022
+    GROUP BY 1
+),
+revenue_2023 AS
+(
+    SELECT
+        branch,
+        SUM(total) AS revenue
+    FROM walmart
+    WHERE EXTRACT(YEAR FROM TO_DATE(date, 'DD/MM/YY')) = 2023
+    GROUP BY 1
+)
+SELECT
+    ls.branch,
+    ls.revenue AS last_year_revenue,
+    cs.revenue AS current_year_revenue,
+    ROUND(
+        (ls.revenue - cs.revenue)::numeric / ls.revenue::numeric * 100,
+        2
+    ) AS rev_dec_ratio
+FROM revenue_2022 AS ls
+JOIN revenue_2023 AS cs
+    ON ls.branch = cs.branch
+WHERE ls.revenue > cs.revenue
+ORDER BY 4 DESC
+LIMIT 5;
+```
+
+**Objective:** Find the 5 branches whose revenue fell the most from 2022 to 2023, to spot possible local issues.
+
+> For MySQL, replace `EXTRACT(YEAR FROM TO_DATE(...))` with `YEAR(STR_TO_DATE(date, '%d/%m/%y'))`.
+
+## SQL Concepts Used
+
+- Aggregation: `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `GROUP BY`, `ORDER BY`, `LIMIT`
+- Window functions: `RANK() OVER (PARTITION BY ...)`
+- Subqueries and CTEs (`WITH`)
+- Conditional logic: `CASE WHEN`
+- Date and time functions: `TO_DATE`, `TO_CHAR`, `EXTRACT`
+- Type casting: `::numeric`, `::time`
+
+## Findings and Conclusion
+
+- **Payments:** Comparing transactions and quantity by payment method shows which payment options customers rely on most.
+- **Ratings:** Highest-rated categories per branch and rating ranges per city show where customer satisfaction is strongest or weakest.
+- **Traffic Patterns:** Busiest days and shift counts show when branches need the most staff and stock.
+- **Profitability:** Profit by category highlights which product lines contribute most to earnings.
+- **Revenue Trends:** The year-over-year comparison flags branches with declining revenue that need attention.
+
+This analysis shows how Python and SQL work together, from raw data to business insight, and can help inform staffing, inventory, marketing, and pricing decisions.
+
+## How to Run
+
+1. Install the dependencies: `pip install pandas sqlalchemy pymysql psycopg2-binary`
+2. Download `Walmart.csv` from Kaggle and place it in the project folder.
+3. Create a PostgreSQL database named `Walmart`.
+4. Run `project.ipynb` to clean the data and load it into the `walmart` table. Enter your database password when prompted. Do not hardcode it in the notebook.
+5. Run the queries in `Process.sql`.
 
 ## Project Structure
 
-```plaintext
-|-- data/                     # Raw data and transformed data
-|-- sql_queries/              # SQL scripts for analysis and queries
-|-- notebooks/                # Jupyter notebooks for Python analysis
-|-- README.md                 # Project documentation
-|-- requirements.txt          # List of required Python libraries
-|-- main.py                   # Main script for loading, cleaning, and processing data
 ```
----
+├── Walmart.csv               # Raw dataset
+├── walmart_clean_data.csv    # Cleaned dataset
+├── project.ipynb             # Data cleaning and loading (Python)
+├── Process.sql               # SQL queries for business problems
+├── requirements.txt
+└── README.md
+```
 
-## Results and Insights
+## Author - [Your Name]
 
-This section will include your analysis findings:
-- **Sales Insights**: Key categories, branches with highest sales, and preferred payment methods.
-- **Profitability**: Insights into the most profitable product categories and locations.
-- **Customer Behavior**: Trends in ratings, payment preferences, and peak shopping hours.
+This project is part of my portfolio, showcasing the Python and SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
 
-## Future Enhancements
+- **YouTube**: [Add your channel link]
+- **Instagram**: [Add your profile link]
+- **LinkedIn**: [Add your profile link]
+- **GitHub**: [Add your profile link]
 
-Possible extensions to this project:
-- Integration with a dashboard tool (e.g., Power BI or Tableau) for interactive visualization.
-- Additional data sources to enhance analysis depth.
-- Automation of the data pipeline for real-time data ingestion and analysis.
-
----
-
-## License
-
-This project is licensed under the MIT License. 
-
----
-
-## Acknowledgments
-
-- **Data Source**: Kaggle’s Walmart Sales Dataset
-- **Inspiration**: Walmart’s business case studies on sales and supply chain optimization.
-
----
+Thank you for your support, and I look forward to connecting with you!
